@@ -12,7 +12,7 @@ const NotFoundError = require('./errors/NotFoundError');
 
 require('dotenv').config();
 
-const { PORT = 3001 } = process.env;
+const { PORT = 3003 } = process.env;
 const app = express();
 
 app.use(cors);
