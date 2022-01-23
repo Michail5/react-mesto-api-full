@@ -12,7 +12,7 @@ const NotFoundError = require('./errors/NotFoundError');
 
 require('dotenv').config();
 
-const { PORT = 3000, BASE_PATH } = process.env;
+const { PORT = 3001 } = process.env;
 const app = express();
 
 app.use(cors);
@@ -43,5 +43,4 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
 app.listen(PORT, () => {
   console.log('Ссылка на сервер');
-  console.log(BASE_PATH);
 });
