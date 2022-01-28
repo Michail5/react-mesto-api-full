@@ -1,22 +1,9 @@
 .header__link {
-  background-color: transparent;
-  border: none;
-  color: #fff;
-  padding: 0;
-  margin: 0;
-  margin-left: 24px;
+  margin-left: 15px;
+  padding: 5px;
   font-size: 18px;
-  transition: 0.3s;
+  line-height: 1.2;
+  color: #fff;
+  font-weight: 400;
   text-decoration: none;
-}
-
-.header__link:hover {
-  cursor: pointer;
-  opacity: 0.6;
-}
-
-@media screen and (max-width: 485px){
-  .header__link {
-    font-size: 14px;
-  }
 }

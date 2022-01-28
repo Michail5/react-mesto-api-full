@@ -1,20 +1,15 @@
-import React from 'react';
-
-function ImagePopup({ card, isOpen, onClose }) {
-  const handleOverlayClick = (evt) => evt.target === evt.currentTarget && onClose();
-
+function ImagePopup({ card, onClose }) {
   return (
-    <div
-      id="imageWindow"
-      className={`popup ${isOpen ? 'popup_opened' : ''}`}
-      role="presentation"
-      onClick={handleOverlayClick}
-    >
-      <div className="popup__container">
-        <button className="popup__close-button" type="button" onClick={onClose} />
+    <div className={`popup popup_img_view ${card ? 'popup_is-opened' : ''}`}>
+      <div className="popup__img-wrapper">
+        <button
+          onClick={onClose}
+          type="button"
+          className="popup__close-btn btn-hover"
+        />
         <figure className="popup__figure">
-          <img className="popup__pic" src={card.src} alt={card.title} />
-          <figcaption className="popup__figcaption">{card.title}</figcaption>
+          <img className="popup__image" src={card?.link} alt={card?.name} />
+          <figcaption className="popup__caption">{card?.name}</figcaption>
         </figure>
       </div>
     </div>

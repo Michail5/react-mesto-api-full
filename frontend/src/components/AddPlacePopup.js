@@ -1,60 +1,72 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PopupWithForm from './PopupWithForm';
 
-function EditAvatarPopup({ isOpen, onClose, onAddPlace }) {
-  const [name, setName] = useState('');
-  const [link, setLink] = useState('');
-  const [buttonTitle, setButtonTitle] = useState('Создать');
-  const handleNameChange = (e) => setName(e.target.value);
-  const handleLinkChange = (e) => setLink(e.target.value);
-  const resetInput = () => {
-    setName('');
-    setLink('');
-    setButtonTitle('Создать');
+function AddPlacePopup(props) {
+  const [place, setPlace] = React.useState({
+    name: '',
+    link: '',
+  });
+
+  const handleChange = (evt) => {
+    setPlace((state) => ({
+      ...state,
+      [evt.target.name]: evt.target.value,
+    }));
   };
-  const handleSubmit = (e) => {
+
+  function handleSubmit(e) {
     e.preventDefault();
-    setButtonTitle('Обработка...');
-    onAddPlace({ name, link })
-      .then(() => resetInput())
-      .catch(() => setButtonTitle('Ошибка!'));
-  };
+
+    props.onAddPlaceSubmit(place);
+  }
+
+  React.useEffect(() => {
+    setPlace({
+      name: '',
+      link: '',
+    });
+  }, [props.isOpen]);
 
   return (
     <PopupWithForm
-      name="placeForm"
-      title="Новое место"
-      isOpen={isOpen}
-      onClose={onClose}
+      {...props}
+      type={'add_card'}
+      title={'Новое место'}
+      submitBtnCaption={'Создать'}
       onSubmit={handleSubmit}
-      btnCaption={buttonTitle}
     >
-      <input
-        id="inputPlaceName"
-        className="popup__input"
-        name="name"
-        type="text"
-        value={name || ''}
-        onChange={handleNameChange}
-        title="назовите место"
-        placeholder="Название"
-        minLength="2"
-        maxLength="30"
-        required
-      />
-      <input
-        id="inputPlaceLink"
-        className="popup__input"
-        name="link"
-        type="url"
-        value={link || ''}
-        onChange={handleLinkChange}
-        title="укажите путь"
-        placeholder="Ссылка на картинку"
-        required
-      />
+      <section className="popup__section">
+        <input
+          onChange={handleChange}
+          value={place.name || ''}
+          id="card-name"
+          type="text"
+          name="name"
+          className="popup__input popup__input_type_img-name"
+          placeholder="Название"
+          required
+          minLength="2"
+          maxLength="30"
+          aria-label="Имя"
+        />
+        <span className="popup__input-error card-name-error"></span>
+      </section>
+      <section className="popup__section">
+        <input
+          onChange={handleChange}
+          value={place.link || ''}
+          id="card-link"
+          type="url"
+          name="link"
+          className="popup__input popup__input_type_img-link"
+          placeholder="Ссылка на картинку"
+          required
+          aria-label="Ссылка на картинку"
+        />
+        <span className="popup__input-error card-link-error"></span>
+      </section>
     </PopupWithForm>
   );
 }
 
-export default EditAvatarPopup;
+export default AddPlacePopup;

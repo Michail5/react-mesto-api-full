@@ -1,30 +1,30 @@
-import React from 'react';
-
-function PopupWithForm({ title, name, children, isOpen, onClose, btnCaption, onSubmit }) {
-  const handleOverlayClick = (evt) => evt.target === evt.currentTarget && onClose();
-
+function PopupWithForm(props) {
+  const submitBtnCaptionIsLoading =
+    props.submitBtnCaptionIsLoading || 'Сохранение...';
   return (
-    <div
-      id={name}
-      className={`popup ${isOpen ? 'popup_opened' : ''}`}
-      role="presentation"
-      onClick={handleOverlayClick}
-    >
-      <form className="popup__container popup__container_data" name={name} onSubmit={onSubmit}>
-        <div className="popup__window">
-          <button
-            className="popup__close-button"
-            type="button"
-            name="closePopup"
-            onClick={onClose}
-          />
-          <h2 className="popup__title">{title}</h2>
-          {children}
-          <button className="popup__submit-button" type="submit" name="submitPopup">
-            {btnCaption}
+    <div className={`popup ${props.isOpen ? 'popup_is-opened' : ''}`}>
+      <div className="popup__container">
+        <button
+          onClick={props.onClose}
+          type="button"
+          className="popup__close-btn btn-hover"
+        />
+        <h2 className="popup__title">{props.title}</h2>
+        <form
+          onSubmit={props.onSubmit}
+          name={props.type}
+          className="popup__form"
+          noValidate
+        >
+          {props.children}
+
+          <button type="submit" className="popup__form-submit btn-hover">
+            {props.isLoading
+              ? submitBtnCaptionIsLoading
+              : props.submitBtnCaption}
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

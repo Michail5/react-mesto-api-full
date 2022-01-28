@@ -1,22 +1,7 @@
 .page {
-  max-width: 880px;
-  display: flex;
-  flex-direction: column;
   margin: 0 auto;
-  padding: 0;
-  font-family: 'Inter', Arial, sans-serif;
-  color: #ffffff;
-  font-style: normal;
-}
-
-@media screen and (max-width: 930px) {
-  .page {
-    margin: 0 50px;
-  }
-}
-
-@media screen and (max-width: 680px) {
-  .page {
-    margin: 0 19px;
-  }
+  min-width: 320px;
+  max-width: 1280px;
+  background-color: #000;
+  color: #fff;
 }

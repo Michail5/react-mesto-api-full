@@ -1,49 +1,63 @@
 import React from 'react';
 import Card from './Card';
-import CurrentUserContext from '../contexts/CurrentUserContext';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 function Main({
-  cards,
   onEditProfile,
-  onAddPlace,
   onEditAvatar,
+  onAddPlace,
   onCardClick,
+  cards,
   onCardLike,
   onCardDelete,
 }) {
-  const { name, about, avatar } = React.useContext(CurrentUserContext);
+  const currentUser = React.useContext(CurrentUserContext);
+
+  const listCards = cards.map((card) => (
+    <Card
+      key={card._id}
+      card={card}
+      onCardClick={onCardClick}
+      onCardLike={onCardLike}
+      onCardDelete={onCardDelete}
+    />
+  ));
 
   return (
-    <>
-      <main>
-        <section className="profile">
-          <div className="profile__avatar-overlay" onClick={onEditAvatar} role="presentation">
-            <img className="profile__avatar" src={avatar} alt="Аватар" />
+    <main className="content">
+      <section className="profile">
+        <div onClick={onEditAvatar} className="profile__avatar-wrapper">
+          <div
+            className="profile__avatar"
+            style={{ backgroundImage: `url(${currentUser.avatar})` }}
+          />
+          <div className="profile__avatar-overlay" />
+        </div>
+        <div className="profile__info">
+          <div className="profile__row">
+            <h1 className="profile__name block">{currentUser.name}</h1>
+            <button
+              onClick={onEditProfile}
+              type="button"
+              aria-label="Редактировать профиль"
+              className="profile__edit-btn btn-hover"
+            />
           </div>
-          <div className="profile__info">
-            <h1 className="profile__title">{name}</h1>
-            <p className="profile__subtitle">{about}</p>
-            <button className="profile__edit-button" type="button" onClick={onEditProfile} />
-          </div>
-          <button className="profile__add-button" type="button" onClick={onAddPlace} />
-        </section>
+          <p className="profile__profession block">{currentUser.about}</p>
+        </div>
 
-        <section>
-          <ul className="cards">
-            {cards.map((item) => (
-              <Card
-                card={item}
-                key={item._id}
-                cardId={item._id}
-                onCardClick={onCardClick}
-                onCardLike={onCardLike}
-                onCardDelete={onCardDelete}
-              />
-            ))}
-          </ul>
-        </section>
-      </main>
-    </>
+        <button
+          onClick={onAddPlace}
+          type="button"
+          aria-label="Добавить карточку"
+          className="profile__add-btn btn-hover"
+        />
+      </section>
+
+      <section className="elements">
+        <ul className="elements__list">{listCards}</ul>
+      </section>
+    </main>
   );
 }
 

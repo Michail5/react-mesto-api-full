@@ -1,53 +1,39 @@
-import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import AuthContext from '../contexts/AuthContext';
+import logo from '../images/logo.svg';
 
-function Header({ onSignOut }) {
-  const location = useLocation().pathname;
-  const authed = React.useContext(AuthContext);
-  
- 
-  const [menuOpened, setMenuOpened] = useState(false);
-  const userEmail = localStorage.getItem('email');
-  const handleSignOut = () => {
-    setMenuOpened(false);
-    onSignOut();
-  };
-  const renderBurger = () => setMenuOpened(!menuOpened);
-  const linkTitle = !authed ? (location === '/sign-in' ? "Регистрация" : "Войти") : "Выйти";
-  const linkDest = !authed ? (location === '/sign-in' ? '/sign-up' : '/sign-in') : "/sign-in";
- 
+function Header({ userEmail, loggedIn, onSignOut }) {
+  const { pathname } = useLocation();
+
+  const to =
+    pathname === '/sign-up'
+      ? '/sign-in'
+      : pathname === '/sign-in'
+      ? '/sign-up'
+      : '';
+  const text =
+    pathname === '/sign-up'
+      ? 'Войти'
+      : pathname === '/sign-in'
+      ? 'Регистрация'
+      : '';
 
   return (
-    <>
-      <div className={`burger ${menuOpened ? 'burger_type_active' : ''}`}>
-        <p className="burger__text">{userEmail}&nbsp;</p>
-        <Link className="burger__link" to={linkDest} onClick={handleSignOut}>
-          {linkTitle}
-        </Link>
-      </div>
-      <header className="header">
-        <div className="header__logo" title="Mesto" />
-        <div className="header__actions">
-          <p className="header__text">{userEmail}&nbsp;</p>
-          <Link
-            to={linkDest}
-            className={`header__link ${authed && 'header__link_idle-on-mobile'}`}
-            onClick={handleSignOut}
-          >
-            {linkTitle}
+    <header className="header">
+      <img className="header__logo" src={logo} alt="логотип" />
+
+      <div className="header__user-status">
+        <p className="header__email">{userEmail}</p>
+        {loggedIn ? (
+          <Link to="/" className="header__link" onClick={onSignOut}>
+            Выйти
           </Link>
-          <button
-            className={`${authed ? 'header__burger' : 'header__burger_idle'} ${
-              menuOpened ? 'header__burger_type_close' : ''
-            }
-            `}
-            type="button"
-            onClick={renderBurger}
-          />
-        </div>
-      </header>
-    </>
+        ) : (
+          <Link to={to} className="header__link">
+            {text}
+          </Link>
+        )}
+      </div>
+    </header>
   );
 }
 

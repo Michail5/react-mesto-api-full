@@ -1,10 +1,14 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
-import AuthContext from '../contexts/AuthContext';
+import { Route, Redirect } from 'react-router-dom';
 
-function ProtectedRoute({ children }) {
-  const authed = React.useContext(AuthContext);
-  return authed ? children : <Navigate to="/sign-in"/>;
-}
+const ProtectedRoute = ({ component: Component, ...props }) => {
+  return (
+    <Route>
+      {() =>
+        props.loggedIn ? <Component {...props} /> : <Redirect to="/sign-in" />
+      }
+    </Route>
+  );
+};
 
 export default ProtectedRoute;
