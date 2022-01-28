@@ -1,17 +1,40 @@
-const userRouter = require('express').Router();
+/* eslint-disable linebreak-style */
+const router = require('express').Router();
+const { celebrate, Joi } = require('celebrate');
+const { linkRegExp } = require('../utils/utils');
+
 const {
-  getUsers, getUser, updateProfile, updateAvatar, getUserInfo,
+  getUsers,
+  getUserById,
+  updateProfile,
+  updateAvatar,
+  getMe,
+  signOut,
 } = require('../controllers/users');
-const {
-  userAvatarValidation,
-  userInfoValidation,
-  userIdValidation,
-} = require('../middlewares/validation');
 
-userRouter.get('/', getUsers);
-userRouter.get('/me', getUserInfo);
-userRouter.get('/:id', userIdValidation, getUser);
-userRouter.patch('/me', userInfoValidation, updateProfile);
-userRouter.patch('/me/avatar', userAvatarValidation, updateAvatar);
+router.patch('/me/avatar', celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().required().pattern(linkRegExp),
+  }),
+}), updateAvatar);
 
-module.exports = userRouter;
+router.patch('/me', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2),
+    about: Joi.string().required().min(2),
+  }),
+}), updateProfile);
+
+router.get('/', getUsers);
+
+router.get('/me', getMe);
+
+router.get('/signout', signOut);
+
+router.get('/:userId', celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().length(24).hex(),
+  }),
+}), getUserById);
+
+module.exports = router;

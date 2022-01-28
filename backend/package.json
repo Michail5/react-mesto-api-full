@@ -1,40 +1,36 @@
 {
-  "name": "mesto-express",
+  "name": "express-mesto",
   "version": "1.0.0",
-  "description": "`/routes` — папка с файлами роутера  \r `/controllers` — папка с файлами контроллеров пользователя и карточки   \r `/models` — папка с файлами описания схем пользователя и карточки",
+  "description": " ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint .",
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "start": "node app.js"
   },
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Michail5/express-mesto.git"
+    "type": "git"
   },
-  "keywords": [],
-  "author": "Michail Yakovlev",
+  "author": "Michail Yakovlev 2022",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Michail5/express-mesto/issues"
+  "devDependencies": {
+    "eslint": "^8.6.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4",
+    "nodemon": "^2.0.15"
   },
-  "homepage": "https://github.com/Michail5/express-mesto",
   "dependencies": {
-    "bcrypt": "^5.0.1",
-    "body-parser": "^1.19.0",
+    "bcryptjs": "^2.4.3",
     "celebrate": "^15.0.0",
     "cookie-parser": "^1.4.6",
-    "dotenv": "^10.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^14.2.0",
     "express": "^4.17.2",
+    "express-winston": "^4.2.0",
+    "helmet": "^5.0.2",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.1.1",
-    "validator": "^13.7.0"
-  },
-  "devDependencies": {
-    "eslint": "^8.4.1",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.3",
-    "nodemon": "^2.0.15"
+    "mongoose": "^6.1.6",
+    "validator": "^13.7.0",
+    "winston": "^3.4.0"
   }
 }
