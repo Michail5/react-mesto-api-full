@@ -4,6 +4,6 @@
 Пожалуйста, прикрепите в это описание ссылку на сайт, размещенный на Яндекс.Облаке.
 
 Frontend - domainname.students.nomoredomains.rocks
-api.domainnames.students.nomoredomains.rocks
+Backend - api.domainnames.students.nomoredomains.rocks
 
 Ip - 62.84.117.79
