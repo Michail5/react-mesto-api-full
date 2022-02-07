@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import { Route, Switch, withRouter, useHistory } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import Main from './Main';
 import ImagePopup from './ImagePopup';
-import api from '../utils/api';
+import api from '../utils/Api';
 import auth from '../utils/auth';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import EditProfilePopup from './EditProfilePopup';
@@ -61,9 +62,9 @@ function App() {
 
         history.push('/');
       })
-      .catch((err) => {
-        console.log('Promise.all', err);
-      });
+     // .catch((err) => {
+     //   console.log('Promise.all', err);
+    //  });
   }, []);
 
   function getData() {
