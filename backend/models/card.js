@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 const mongoose = require('mongoose');
 const { linkRegExp } = require('../utils/utils');
 // Опишем схему:

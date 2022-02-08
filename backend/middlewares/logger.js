@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 // middlewares/logger.js
 
 const winston = require('winston');
