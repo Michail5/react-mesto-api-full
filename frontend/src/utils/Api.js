@@ -1,5 +1,5 @@
 const configAPI = {
-  baseUrl: 'https://domainname.students.nomoredomains.rocks',
+  baseUrl: 'https://api.domainname.students.nomoredomains.rocks',
   headers: {
     'Content-Type': 'application/json',
   },
