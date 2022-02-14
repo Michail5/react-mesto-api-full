@@ -1,5 +1,8 @@
-'use strict';
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-expressions */
+import React, { configAPI } from "react";
 
+'use strict';
 const configValidate = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
@@ -37,7 +40,7 @@ const avatarLogo = document.querySelector('.profile__avatar-wrapper');
 
 const confirmPopup = document.querySelector('.popup_confirm');
 
-export {
+export { 
   configAPI,
   configValidate,
   editProfileBtn,

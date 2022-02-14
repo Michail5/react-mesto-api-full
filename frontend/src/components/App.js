@@ -45,7 +45,7 @@ function App() {
   //     .then(({ data }) => {
   //       setEmail(data.email);
   //       setLoggedIn(true);
-  //       // getData();
+  //       getData();
   //       history.push('/');
   //     })
   //     .catch((err) => console.log(err));
@@ -62,9 +62,9 @@ function App() {
 
         history.push('/');
       })
-     // .catch((err) => {
-     //   console.log('Promise.all', err);
-    //  });
+     .catch((err) => {
+       console.log('Promise.all', err);
+     });
   }, []);
 
   function getData() {
