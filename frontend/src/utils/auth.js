@@ -49,6 +49,6 @@ class Auth {
   }
 }
 
-const auth = new Auth('http://api.domainnames.students.nomoredomains.rocks');
+const auth = new Auth('https://api.domainnames.students.nomoredomains.rocks');
 
 export default auth;
