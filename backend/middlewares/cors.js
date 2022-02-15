@@ -3,6 +3,7 @@ const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 const allowedCors = [
   'http://localhost:3000',
   'https://domainname.students.nomoredomains.rocks',
+  'http://domainname.students.nomoredomains.rocks',
 ];
 
 // eslint-disable-next-line consistent-return
