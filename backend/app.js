@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+/* eslint-disable no-undef */
 require('dotenv').config();
 const helmet = require('helmet');
 const express = require('express');
@@ -12,10 +14,24 @@ const { linkRegExp } = require('./utils/utils');
 const { NotFoundError } = require('./errors/not-found-err');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const mycors = require('./middlewares/cors');
+const cors = require('cors');
 
 const { PORT = 3000 } = process.env;
 
 const app = express();
+
+app.use(
+  cors({
+    credentials: true,
+    origin(origin, callback) {
+      if (corsAllowed.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+  }),
+);
 
 app.use(express.json());
 app.use(cookieParser());
