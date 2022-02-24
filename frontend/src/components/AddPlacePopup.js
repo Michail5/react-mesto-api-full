@@ -63,7 +63,8 @@ function AddPlacePopup(props) {
           required
           aria-label="Ссылка на картинку"
         />
-        <span className="popup__input-error card-link-error"></span>
+        <span className="popup__input-error card-link-error">
+        </span>
       </section>
     </PopupWithForm>
   );

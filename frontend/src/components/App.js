@@ -190,6 +190,8 @@ function App() {
       })
       .catch((err) => {
         console.log('handleUpdateUser', err);
+        
+        return [];
       });
   };
 
@@ -203,7 +205,10 @@ function App() {
       })
       .catch((err) => {
         console.log('handleUpdateAvatar', err);
-      });
+        
+        return [];
+      })
+      .finally(() => setIsLoading("Сохранить"));
   };
 
   const handleAddPlaceSubmit = (place) => {
@@ -216,7 +221,10 @@ function App() {
       })
       .catch((err) => {
         console.log('handleAddPlaceSubmit', err);
-      });
+
+        return [];
+      })
+      .finally(() => setIsLoading("Создать"));
   };
 
   return (
