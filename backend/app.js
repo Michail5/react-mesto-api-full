@@ -17,26 +17,26 @@ const app = express();
 
 // app.use(cors);
 
-const corsAllowed = [
-  'http://localhost:3000',
-  'https://domainname.students.nomoredomains.rocks',
-  'http://domainname.students.nomoredomains.rocks',
-];
+//const corsAllowed = [
+//  'http://localhost:3000',
+//  'https://domainname.students.nomoredomains.rocks',
+ // 'http://domainname.students.nomoredomains.rocks',
+//];
 
 require('dotenv').config();
 
-app.use(
-  cors({
-    credentials: true,
-    origin(origin, callback) {
-      if (corsAllowed.includes(origin) || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-  }),
-);
+//app.use(
+ // cors({
+ //   credentials: true,
+  //  origin(origin, callback) {
+  //    if (corsAllowed.includes(origin) || !origin) {
+   //     callback(null, true);
+  //    } else {
+  //      callback(new Error('Not allowed by CORS'));
+ //     }
+ //   },
+//  }),
+//);
 
 app.options('*', cors());
 
