@@ -3,6 +3,7 @@ const ALLOWED_CORS = [
   'http://localhost:3000',
   'http://domainname.students.nomoredomains.rocks',
   'https://domainname.students.nomoredomains.rocks',
+  'https://api.domainnames.students.nomoredomains.rocks',
 ];
 
 module.exports = (req, res, next) => {
