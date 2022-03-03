@@ -1,66 +1,54 @@
 class Auth {
-  constructor({ url, headers }) {
-    this._url = url;
-    this._headers = headers;
+  constructor(baseUrl) {
+    this.baseUrl = baseUrl;
   }
 
-  _getResponseData(result) {
-    if (!result.ok) {
-      return Promise.reject(`Ошибка: ${result.status}`);
+  _checkResponse(res) {
+    if (res.ok) {
+      return res.json();
     }
-    return result.json();
+    return Promise.reject(`Ошибка ${res.status}`);
   }
 
-  authorise(email, password) {
-    return fetch(`${this._url}/signin`, {
+  registration({ email, password }) {
+    return fetch(`${this.baseUrl}/signup`, {
       method: 'POST',
-      headers: this._headers,
-      credentials: "include",
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    }).then((result) => this._getResponseData(result));
-  }
-
-  register(email, password) {
-    return fetch(`${this._url}/signup`, {
-      method: 'POST',
-      headers: this._headers,
-      credentials: "include",
-      body: JSON.stringify({
-        email,
-        password
-      }),
-    }).then((result) => this._getResponseData(result));
-  }
-
-  getContent() {
-    return fetch(`${this._url}/users/me`, {
-      method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: "include",
-    }).then((result) => this._getResponseData(result));
+      body: JSON.stringify({ password, email }),
+    }).then(this._checkResponse);
   }
 
-  signOut = () => {
-    return fetch(`${this._url}/signout`, {
-      method: "DELETE",
-      credentials: "include",
-    }).then((result) => {
-      this._getResponseData(result)
-    });
-  };
+  authorization({ email, password }) {
+    return fetch(`${this.baseUrl}/signin`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password, email }),
+    }).then(this._checkResponse);
+  }
+
+  checkToken() {
+    return fetch(`${this.baseUrl}/users/me`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(this._checkResponse);
+  }
+
+  signOut() {
+    return fetch(`${this.baseUrl}/users/signout`, {
+      credentials: 'include',
+    }).then(this._checkResponse);
+  }
 }
 
-const auth = new Auth({
-  url: 'https://api.domainnames.students.nomoredomains.rocks',
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  },
-});
+const auth = new Auth('https://api.domainnames.students.nomoredomains.rocks');
 
 export default auth;
