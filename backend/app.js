@@ -1,50 +1,49 @@
+/* eslint-disable import/order */
+/* eslint-disable no-undef */
+require('dotenv').config();
+const helmet = require('helmet');
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const { errors } = require('celebrate');
-const cors = require('cors');
-const { createUser, login, signOut } = require('./controllers/users');
-const { userValidation, loginValidation } = require('./middlewares/validation');
+const { celebrate, Joi, errors } = require('celebrate');
+const router = require('express').Router();
+const { login, createUser, signOut } = require('./controllers/users');
 const auth = require('./middlewares/auth');
-const errorHandler = require('./middlewares/errorHandler');
-const NotFoundError = require('./errors/NotFoundError');
+const errorsHandler = require('./errors/errorsHandler');
+const { linkRegExp } = require('./utils/utils');
+const { NotFoundError } = require('./errors/not-found-err');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-// const cors = require('./middlewares/cors');
+// const mycors = require('./middlewares/cors');
+const cors = require('cors');
 
 const { PORT = 3000 } = process.env;
+
 const app = express();
 
-// app.use(cors);
+app.use(
+  cors({
+    credentials: true,
+    origin(origin, callback) {
+      if (corsAllowed.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+  }),
+);
 
-//const corsAllowed = [
-//  'http://localhost:3000',
-//  'https://domainname.students.nomoredomains.rocks',
- // 'http://domainname.students.nomoredomains.rocks',
-//];
-
-require('dotenv').config();
-
-//app.use(
- // cors({
- //   credentials: true,
-  //  origin(origin, callback) {
-  //    if (corsAllowed.includes(origin) || !origin) {
-   //     callback(null, true);
-  //    } else {
-  //      callback(new Error('Not allowed by CORS'));
- //     }
- //   },
-//  }),
-//);
-
-app.options('*', cors());
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cookieParser());
-
+app.use(helmet());
 app.use(requestLogger);
+
+// app.use(mycors);
+
+mongoose.connect('mongodb://localhost:27017/mestodb', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -52,9 +51,24 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signin', loginValidation, login);
-app.post('/signup', userValidation, createUser);
-app.delete('/signout', signOut);
+router.get('/signout', signOut);
+
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+  }),
+}), login);
+
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().pattern(linkRegExp),
+  }),
+}), createUser);
 
 app.use(auth);
 
@@ -62,16 +76,16 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use('*', () => {
-  throw new NotFoundError('Запрашиваемый ресурс не найден');
+  throw new NotFoundError('Страница не найдена');
 });
 
 app.use(errorLogger);
-app.use(errors());
-app.use(errorHandler);
-mongoose.connect('mongodb://localhost:27017/mestodb', {});
+
+app.use(errors()); // обработчик celebrate
+
+app.use(errorsHandler);
 
 app.listen(PORT, () => {
-  console.log('Ссылка на сервер');
-  console.log(PORT);
-  console.log(process.env.JWT_SECRET);
+  // eslint-disable-next-line no-console
+  console.log(`Server run on port ${PORT}...`);
 });
