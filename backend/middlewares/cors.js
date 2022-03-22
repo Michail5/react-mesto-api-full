@@ -4,7 +4,6 @@ const ALLOWED_CORS = [
   'https://localhost:3000',
   'https://domainname.students.nomoredomains.rocks',
   'http://domainname.students.nomoredomains.rocks',
-  'https://api.domainnames.students.nomoredomains.rocks',
 
 ];
 
