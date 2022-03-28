@@ -1,7 +1,0 @@
-.profile__photo-block {
-  position: relative;
-}
-
-.profile__photo-block:hover .profile__photo-overlay {
-  opacity: 1;
-}
