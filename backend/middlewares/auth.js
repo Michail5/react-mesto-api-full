@@ -1,23 +1,19 @@
 const jwt = require('jsonwebtoken');
-const NotAuthError = require('../errors/NotAuthError');
+const WrongLoginData = require('../errors/WrongLoginData');
 
-// eslint-disable-next-line consistent-return
-module.exports = (req, res, next) => {
-  const token = req.cookies.jwt;
-
+const auth = (req, res, next) => {
   const { NODE_ENV, JWT_SECRET } = process.env;
-
-  if (!token) {
-    throw new NotAuthError('Авторизуйтесь, пожалуйста');
-  }
-
   let payload;
-
   try {
-    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'super-strong-secret');
-    req.user = payload;
-    next();
+    payload = jwt.verify(
+      req.cookies.token,
+      NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+    );
   } catch (err) {
-    throw new NotAuthError('Авторизуйтесь, пожалуйста');
+    throw new WrongLoginData('Требуется авторизация.');
   }
+  req.user = payload;
+  next();
 };
+
+module.exports = auth;
