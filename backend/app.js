@@ -1,78 +1,68 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
-const cors = require('cors');
-const { createUser, login, signOut } = require('./controllers/users');
-const { userValidation, loginValidation } = require('./middlewares/validation');
+const userRouter = require('./routes/users');
+const cardRouter = require('./routes/cards');
+const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
-const errorHandler = require('./middlewares/errorHandler');
 const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-// const cors = require('./middlewares/cors');
 
 const { PORT = 3000 } = process.env;
+const { loginValidation, createUserValidation } = require('./middlewares/errors');
+
 const app = express();
-
-// app.use(cors);
-
-const corsAllowed = [
-  'http://localhost:3000',
-  'https://localhost:3000',
+const allowedCors = [
   'https://domainname.students.nomoredomains.rocks',
+  'https://api.domainnames.students.nomoredomains.rocks',
   'http://domainname.students.nomoredomains.rocks',
+  'http://api.domainnames.students.nomoredomains.rocks',
+  'http://localhost:3000/',
 ];
-
-require('dotenv').config();
-
-app.use(
-  cors({
-    credentials: true,
-    origin(origin, callback) {
-      if (corsAllowed.includes(origin) || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-  }),
-);
-
-app.options('*', cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 app.use(requestLogger);
-
+app.use((req, res, next) => {
+  const { origin } = req.headers;
+  const { method } = req;
+  const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
+  const requestHeaders = req.headers['access-control-request-headers'];
+  if (allowedCors.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', true);
+  }
+  if (method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+    res.header('Access-Control-Allow-Headers', requestHeaders);
+    return res.end();
+  }
+  return next();
+});
 app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
 });
-
 app.post('/signin', loginValidation, login);
-app.post('/signup', userValidation, createUser);
-app.delete('/signout', signOut);
-
-app.use(auth);
-
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
-
+app.post('/signup', createUserValidation, createUser);
+app.use('/', auth, userRouter);
+app.use('/', auth, cardRouter);
 app.use('*', () => {
-  throw new NotFoundError('Запрашиваемый ресурс не найден');
+  throw new NotFoundError('Такой страницы не существует.');
 });
-
 app.use(errorLogger);
 app.use(errors());
-app.use(errorHandler);
-mongoose.connect('mongodb://localhost:27017/mestodb', {});
-
-app.listen(PORT, () => {
-  console.log('Ссылка на сервер');
-  console.log(PORT);
-  console.log(process.env.JWT_SECRET);
+app.use((err, req, res, next) => {
+  const status = err.statusCode || 500;
+  const { message } = err;
+  res.status(status).json({ message: message || 'Произошла ошибка на сервере' });
+  return next();
 });
+mongoose.connect('mongodb://localhost:27017/mestodb');
+
+app.listen(PORT);
