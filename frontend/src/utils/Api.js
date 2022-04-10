@@ -1,89 +1,105 @@
 class Api {
-  constructor({ baseUrl, headers }) {
-    this._baseUrl = baseUrl
-    this._headers = headers
+  constructor(options) {
+    this._url = options.baseUrl;
+    this._headers = options.headers;
   }
-  _checkResponse = (response) => {
-    if (response.ok) {
-      return response.json()
+
+  //  проверяем все ли впорядке с ответом
+  _checkResponse(res) {
+    if (res.ok) {
+      return res.json();
     }
-    return Promise.reject(`Ошибка: ${response.status}`)
+    return Promise.reject(`Ошибка: ${res.status}`);
   }
-  updateAvatar(avatarLink, token) {
-    return fetch(`${this._baseUrl}/users/me/avatar`, {
+
+  changeLikeCardStatus(id, isLiked) {
+    return fetch(this._url + `/cards/${id}/likes`, {
+      credentials: 'include',
+      method: `${isLiked ? 'PUT' : 'DELETE'}`,
+      headers: this._headers,
+    }).then(this._checkResponse);
+  }
+
+  getUserInfo() {
+    return fetch(this._url + '/users/me', {
+      credentials: 'include',
+      method: 'GET',
+      headers: this._headers,
+    }).then(this._checkResponse);
+  }
+
+  setUserInfo(inputValue) {
+    return fetch(this._url + '/users/me', {
+      credentials: 'include',
       method: 'PATCH',
-      headers: { ...this._headers, Authorization: `Bearer ${token}` },
       body: JSON.stringify({
-        avatar: avatarLink,
+        name: inputValue.name,
+        about: inputValue.about,
       }),
-    }).then(this._checkResponse)
+      headers: this._headers,
+    }).then(this._checkResponse);
   }
 
-  changeLikeCardStatus = (cardId, isLiked, token) => {
-    if (!isLiked) {
-      return this._likeCard(cardId, token)
-    } else {
-      return this._UnlikeCard(cardId, token)
-    }
-  }
-  _UnlikeCard(cardId, token) {
-    return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
-      method: 'DELETE',
-      headers: { ...this._headers, Authorization: `Bearer ${token}` },
-    }).then(this._checkResponse)
-  }
-  _likeCard(cardId, token) {
-    return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
-      method: 'PUT',
-      headers: { ...this._headers, Authorization: `Bearer ${token}` },
-    }).then(this._checkResponse)
+  setUserAvatar(userAvatar) {
+    return fetch(this._url + '/users/me/avatar', {
+      credentials: 'include',
+      method: 'PATCH',
+      body: JSON.stringify({
+        avatar: userAvatar.avatar,
+      }),
+      headers: this._headers,
+    }).then(this._checkResponse);
   }
 
-  deleteCard(cardId, token) {
-    return fetch(`${this._baseUrl}/cards/${cardId}`, {
-      method: 'DELETE',
-      headers: { ...this._headers, Authorization: `Bearer ${token}` },
-    }).then(this._checkResponse)
-  }
-
-  postCard(name, link, token) {
-    return fetch(`${this._baseUrl}/cards`, {
+  setNewCard(inputValue) {
+    return fetch(this._url + '/cards', {
+      credentials: 'include',
       method: 'POST',
-      headers: { ...this._headers, Authorization: `Bearer ${token}` },
       body: JSON.stringify({
-        name: name,
-        link: link,
+        name: inputValue.name,
+        link: inputValue.link,
       }),
-    }).then(this._checkResponse)
+      headers: this._headers,
+    }).then(this._checkResponse);
   }
 
-  updateUserInfo(name, about, token) {
-    return fetch(`${this._baseUrl}/users/me`, {
-      method: 'PATCH',
-      headers: { ...this._headers, Authorization: `Bearer ${token}` },
-      body: JSON.stringify({
-        name: name,
-        about: about,
-      }),
-    }).then(this._checkResponse)
-  }
-  getUserInfo(token) {
-    return fetch(`${this._baseUrl}/users/me`, {
+  getInitialCards() {
+    return fetch(this._url + '/cards', {
+      credentials: 'include',
       method: 'GET',
-      headers: { ...this._headers, authorization: `Bearer ${token}` },
-    }).then(this._checkResponse)
+      headers: this._headers,
+    }).then(this._checkResponse);
   }
-  getInitialCards(token) {
-    return fetch(`${this._baseUrl}/cards`, {
-      method: 'GET',
-      headers: { ...this._headers, Authorization: `Bearer ${token}` },
-    }).then(this._checkResponse)
+
+  putLike(cardId) {
+    return fetch(this._url + `/cards/${cardId}/likes`, {
+      credentials: 'include',
+      method: 'PUT',
+      headers: this._headers,
+    }).then(this._checkResponse);
+  }
+
+  deleteLike(cardId) {
+    return fetch(this._url + `/cards/${cardId}/likes`, {
+      credentials: 'include',
+      method: 'DELETE',
+      headers: this._headers,
+    }).then(this._checkResponse);
+  }
+
+  deleteCard(cardId) {
+    return fetch(this._url + `/cards/${cardId}`, {
+      credentials: 'include',
+      method: 'DELETE',
+      headers: this._headers,
+    }).then(this._checkResponse);
   }
 }
 
 export const api = new Api({
   baseUrl: 'https://api.domainnames.students.nomoredomains.rocks',
+  credentials: 'include',
   headers: {
     'Content-Type': 'application/json',
   },
-})
+});

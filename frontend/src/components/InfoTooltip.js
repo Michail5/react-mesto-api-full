@@ -1,24 +1,14 @@
-import vseOk from '../images/vseOk.svg'
-import vseNeOk from '../images/vseNeOk.svg'
+import React from 'react';
+import PopupWithForm from './PopupWithForm';
+
 
 function InfoTooltip(props) {
   return (
-    <section className={`popup infoTooltip-popup ${props.isOpen && 'popup_is-opened'}`}>
-      <div className='popup__container infoTooltip'>
-        <button className='popup__close-button' type='button' onClick={props.onClose} />
-        <img
-          className='infoTooltip__image'
-          alt='Регистрация,Авторизация'
-          src={props.onCondition ? vseOk : vseNeOk}
-        />
-        <h2 className='infoTooltip__text'>
-          {props.onCondition
-            ? 'Вы успешно зарегистрировались!'
-            : 'Что-то пошло не так! Попробуйте ещё раз.'}
-        </h2>
-      </div>
-    </section>
-  )
+    <PopupWithForm onClose={props.onClose} isOpen={props.isOpen}>
+      <img className="infoTooltip__image" alt="Уведомление" src={props.image} />
+      <p className="infoTooltip__paragraph">{props.title}</p>
+    </PopupWithForm>
+  );
 }
 
-export default InfoTooltip
+export default InfoTooltip;

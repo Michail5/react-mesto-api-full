@@ -1,32 +1,36 @@
-import logo from '../images/logo.svg'
-import { Link, useLocation } from 'react-router-dom'
+import React from 'react';
+import logo from '../images/logo.svg';
+import { useLocation, Link } from 'react-router-dom';
 
 function Header(props) {
-  const currentLink = useLocation()
+  const location = useLocation();
   return (
-    <header className='header'>
-      <img src={logo} alt='Логотип Место' className='header__logo' />
-      {props.loggedIn ? (
-        <div className='header__mail-menu'>
-          <p className='header__email'>{props.userMail}</p>
-          <Link className='header__text header__text_dark' to='/sign-in' onClick={props.signOut}>
+    <header className="header">
+      <a href="https://nikitas.nomoredomains.work/">
+        <img className="header__logo" src={logo} alt="результат регистрации" />
+      </a>
+      {!props.isLoading ? props.loggedIn ? (
+        <div className="header__container">
+          <p className="header__login">{props.email}</p>
+          <button
+            onClick={props.onSignOut}
+            type="submit"
+            className="header__button"
+          >
             Выйти
-          </Link>
+          </button>
         </div>
+      ) : location.pathname === '/sign-up' ? (
+        <Link to="/sign-in" className="header__link">
+          Войти
+        </Link>
       ) : (
-        <>
-          {currentLink.pathname === '/sign-in' ? (
-            <Link className='header__text' to='/sign-up'>
-              Регистрация
-            </Link>
-          ) : (
-            <Link className='header__text' to='/sign-in'>
-              Войти
-            </Link>
-          )}
-        </>
-      )}
+        <Link to="/sign-up" className="header__link">
+          Регистрация
+        </Link>
+      ) : ''}
     </header>
-  )
+  );
 }
-export default Header
+
+export default Header;

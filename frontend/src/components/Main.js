@@ -1,52 +1,61 @@
-import { useContext } from 'react'
-import { CurrentUserContext } from '../contexts/CurrentUserContext.js'
-import Card from './Card.js'
-import Footer from './Footer.js'
+import React, { useContext } from 'react';
+import { CurrentUserContext } from '../context/CurrentUserContext';
+import Card from './Card';
 
 function Main(props) {
-  const traverseUserContext = useContext(CurrentUserContext)
-
+  const currentUser = useContext(CurrentUserContext);
   return (
-    <>
-      <main className='content'>
-        <section className='profile'>
-          <div className='profile__avatar-section'>
+    <main className="main">
+      <section className="profile">
+        <div className="profile__container">
+          <div className="profile__avatar-container">
             <img
-              src={traverseUserContext.avatar}
-              alt='Аватар профиля'
-              className='profile__avatar'
+              className="profile__avatar"
+              src={currentUser.avatar}
+              alt="аватар пользователя"
             />
-            <button type='button' className='profile__avatar-button' onClick={props.onEditAvatar} />
+            <button
+              onClick={props.onEditAvatar}
+              className="profile__button profile__button_type_avatar"
+              aria-label="Сменить аватар"
+              type="button"
+            ></button>
           </div>
-          <div className='profile__info'>
-            <div className='profile__heading'>
-              <h1 className='profile__title'>{traverseUserContext.name}</h1>
+          <div className="profile__profile-info">
+            <div className="profile__main-info">
+              <h1 className="profile__name">{currentUser.name}</h1>
               <button
-                type='button'
-                className='profile__edit-button'
                 onClick={props.onEditProfile}
-              />
+                className="profile__button profile__button_type_edit"
+                aria-label="Редактировать"
+                type="button"
+              ></button>
             </div>
-            <p className='profile__subtitle'>{traverseUserContext.about}</p>
+            <p className="profile__description">{currentUser.about}</p>
           </div>
-          <button type='button' className='profile__add-button' onClick={props.onAddPlace} />
-        </section>
-        <section className='elements'>
-          {props.cards.map((item) => {
-            return (
-              <Card
-                card={item}
-                onCardClick={props.onCardClick}
-                onCardLike={props.onCardLike}
-                onCardDelete={props.onCardDelete}
-                key={item._id}
-              />
-            )
-          })}
-        </section>
-      </main>
-      <Footer />
-    </>
-  )
+        </div>
+        <button
+          onClick={props.onAddPlace}
+          className="profile__button profile__button_type_plus"
+          aria-label="Добавить"
+          type="button"
+        ></button>
+      </section>
+      <section className="elements">
+        <ul className="elements__list">
+          {props.card.map((item) => (
+            <Card
+              key={item._id}
+              onCardDelete={props.onCardDelete}
+              onCardClick={props.onCardClick}
+              onCardLike={props.onCardLike}
+              card={item}
+            />
+          ))}
+        </ul>
+      </section>
+    </main>
+  );
 }
-export default Main
+
+export default Main;
