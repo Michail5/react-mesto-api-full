@@ -1,149 +1,156 @@
-const jsonwebtoken = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const User = require('../models/users');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const NotFoundError = require('../errors/NotFoundError');
-const ConflictError = require('../errors/ConflictError');
-const NotAuthError = require('../errors/NotAuthError');
-const ValidationError = require('../errors/ValidationError');
+const WrongData = require('../errors/WrongData');
+const DefaultError = require('../errors/DefaultError');
+const SameEmail = require('../errors/SameEmail');
+const User = require('../models/user');
 
-module.exports.getUsers = (req, res, next) => {
+const { NODE_ENV, JWT_SECRET } = process.env;
+
+const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
-    .catch(next);
-};
-
-module.exports.getUser = (req, res, next) => {
-  User.findById(req.params.id)
-    .orFail(new NotFoundError('Пользователь по указанному _id не найден'))
-    .then((user) => {
-      res.send(user);
-    })
-    .catch((e) => {
-      if (e.name === 'CastError') {
-        next(new ValidationError(e.message));
-      } else {
-        next(e);
-      }
+    .then((user) => res.send({ data: user }))
+    .catch(() => {
+      throw new DefaultError('Произошла ошибка');
     })
     .catch(next);
 };
 
-module.exports.updateProfile = (req, res, next) => {
-  const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, {
-    new: true,
-    runValidators: true,
-  })
-    .orFail(new NotFoundError('Пользователь по указанному _id не найден'))
-    .then((user) => {
-      res.send(user);
-    })
-    .catch((e) => {
-      if (e.name === 'CastError') {
-        next(new ValidationError(e.message));
-      } else {
-        next(e);
-      }
+const getUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => res.send({ user }))
+    .catch(() => {
+      throw new NotFoundError('Данные пользователя не найдены.');
     })
     .catch(next);
 };
 
-module.exports.updateAvatar = (req, res, next) => {
-  const { avatar } = req.body;
-
-  User.findByIdAndUpdate(req.user._id, { avatar }, {
-    new: true,
-    runValidators: true,
-  })
-    .orFail(new NotFoundError('Пользователь по указанному _id не найден'))
-    .then((user) => {
-      res.send(user);
-    })
-    .catch((e) => {
-      if (e.name === 'CastError') {
-        next(new ValidationError(e.message));
-      } else {
-        next(e);
-      }
-    })
-    .catch(next);
-};
-
-module.exports.createUser = (req, res, next) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        throw new ConflictError('Пользователь с таким email уже существует');
-      } else {
-        return bcrypt.hash(password, 10);
-      }
-    })
-    .then((hash) => {
-      User.create({
-        name, about, avatar, email, password: hash,
-      })
-        .then(() => {
-          res.status(200).send({
-            data: {
-              name, about, avatar, email,
-            },
-          });
-        })
-        .catch(next);
-    }).catch(next);
-};
-
-module.exports.login = (req, res, next) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
-  const { NODE_ENV, JWT_SECRET } = process.env;
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        { expiresIn: '7d' },
+      );
+      return res
+        .cookie('token', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+          sameSite: 'None',
+          secure: true,
+        })
+        .send({ token });
+    })
+    .catch(next);
+};
 
-  User.findOne({ email }).select('+password')
+const getUsersById = (req, res, next) => {
+  User.findById(req.params._id)
     .then((user) => {
       if (!user) {
-        throw new NotAuthError('Неправильные логин или пароль');
-      }
-
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) {
-            throw new NotAuthError('Неверный пароль');
-          }
-
-          return user;
+        throw new NotFoundError('Данные пользователя не найдены.');
+      } else {
+        res.send({
+          data: {
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+            _id: user._id,
+          },
         });
-    }).then((user) => {
-      const token = jsonwebtoken.sign(
-        {
-          _id: user._id,
-        },
-        NODE_ENV === 'production' ? JWT_SECRET : 'super-strong-secret',
-        {
-          expiresIn: '7d',
-        },
-      );
-
-      res.cookie('jwt', token, {
-        httpOnly: true,
-        maxAge: 3600000 * 24 * 7,
-        sameSite: 'none',
-        secure: true,
-      })
-        .send({ message: 'Логин успешный' });
+      }
     })
     .catch(next);
 };
 
-module.exports.getUserInfo = (req, res, next) => {
-  User.findById(req.user._id)
+const createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email,
+  } = req.body;
+  bcrypt
+    .hash(req.body.password, 10)
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
+    .then(() => res.status(200).send({
+      data: {
+        name,
+        about,
+        avatar,
+        email,
+      },
+    }))
+    .catch((err) => {
+      if (err.name === 'MongoServerError' && err.code === 11000) {
+        throw new SameEmail('Такой пользователь уже существует.');
+      } else if (err.name === 'ValidationError') {
+        throw new WrongData('Переданы некорректные данные.');
+      } else {
+        throw new DefaultError('Произошла ошибка');
+      }
+    })
+    .catch(next);
+};
+
+const updateAvatar = (req, res, next) => {
+  const owner = req.user._id;
+  const { avatar } = req.body;
+  User.findByIdAndUpdate(owner, { avatar }, { new: true, runValidators: true })
     .then((user) => {
-      res.send(user);
+      if (!user) {
+        throw new NotFoundError('Данные пользователя не найдены.');
+      } else {
+        res.send({ data: user });
+      }
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        throw new WrongData('Переданы некорректные данные.');
+      } else {
+        throw new DefaultError('Произошла ошибка');
+      }
     })
     .catch(next);
 };
 
-module.exports.signOut = (req, res) => {
-  res.cookie('jwt', { maxAge: 0 }).send({ message: 'cookies deleted' });
+const updateUser = (req, res, next) => {
+  const owner = req.user._id;
+  const { name, about } = req.body;
+  User.findByIdAndUpdate(
+    owner,
+    { name, about },
+    { new: true, runValidators: true },
+  )
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Произошла ошибка');
+      } else {
+        res.send({ data: user });
+      }
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        throw new NotFoundError('Данные пользователя не найдены.');
+      } else {
+        throw new DefaultError('Произошла ошибка');
+      }
+    })
+    .catch(next);
+};
+
+module.exports = {
+  createUser,
+  getUsers,
+  getUsersById,
+  updateUser,
+  updateAvatar,
+  login,
+  getUser,
 };
