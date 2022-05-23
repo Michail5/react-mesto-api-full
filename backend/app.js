@@ -20,7 +20,7 @@ const allowedCors = [
   'https://api.domainnames.students.nomoredomains.rocks',
   'http://domainname.students.nomoredomains.rocks',
   'http://api.domainnames.students.nomoredomains.rocks',
-  'http://localhost:3000',
+  'http://localhost:3000/',
 ];
 
 app.use(bodyParser.json());
