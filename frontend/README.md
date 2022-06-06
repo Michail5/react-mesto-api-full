@@ -6,4 +6,4 @@
 Frontend - domainname.students.nomoredomains.rocks
 api.domainnames.students.nomoredomains.rocks
 
-Ip - 62.84.117.79
+Ip - 178.154.254.204
