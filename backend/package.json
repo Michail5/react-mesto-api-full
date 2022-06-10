@@ -9,7 +9,6 @@
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
-
   "keywords": [],
   "license": "ISC",
   "dependencies": {
@@ -23,14 +22,14 @@
     "express": "^4.17.1",
     "express-winston": "^4.2.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.1.1",
+    "mongoose": "^6.3.6",
     "validator": "^13.7.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
     "eslint": "^8.4.1",
-    "eslint-plugin-import": "^2.25.3",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3",
     "nodemon": "^2.0.15"
   }
 }
