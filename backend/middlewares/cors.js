@@ -1,11 +1,12 @@
 const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 const ALLOWED_CORS = [
   'http://localhost:3000',
-  'https://localhost:3000',
-  'https://domainname.students.nomoredomains.rocks',
-  'https://api.domainnames.students.nomoredomains.rocks',
-  'http://domainname.students.nomoredomains.rocks',
-  'http://api.domainnames.students.nomoredomains.rocks',
+  'http://localhost:3000',
+  // 'https://localhost:3000',
+  // 'https://domainname.students.nomoredomains.rocks',
+  // 'https://api.domainnames.students.nomoredomains.rocks',
+  // 'http://domainname.students.nomoredomains.rocks',
+  // 'http://api.domainnames.students.nomoredomains.rocks',
 ];
 
 module.exports = (req, res, next) => {
