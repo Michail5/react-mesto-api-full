@@ -12,13 +12,14 @@ const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 // const cors = require('./middlewares/cors');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 const app = express();
 
 // app.use(cors);
 
 const corsAllowed = [
   'https://localhost:3000',
+  'http://localhost:3000',
   'https://domainname.students.nomoredomains.rocks',
   'https://api.domainnames.students.nomoredomains.rocks',
   'http://domainname.students.nomoredomains.rocks',
