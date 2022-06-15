@@ -24,12 +24,7 @@ module.exports = (req, res, next) => {
     res.header('Access-Control-Allow-Headers', requestHeaders);
     res.end();
   }
-  if(request: Request, response: Response): void => {
-      response.status(200)
-      response.header({
-        'Access-Control-Allow-Origin': '*',
-      });
-}
+
 
    next();
 };
