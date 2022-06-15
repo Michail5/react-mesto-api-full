@@ -11,6 +11,9 @@ const errorHandler = require('./middlewares/errorHandler');
 const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
  const cors = require('./middlewares/cors');
+import cors from 'cors';
+const server = express();
+server.use(cors());
 
 const { PORT = 3001 } = process.env;
 const app = express();
