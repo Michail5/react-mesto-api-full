@@ -22,6 +22,8 @@ const corsAllowed = [
   'http://localhost:3000',
   'https://domainname.students.nomoredomains.rocks',
   'https://api.domainnames.students.nomoredomains.rocks',
+  'http://domainname.students.nomoredomains.rocks',
+  'http://api.domainnames.students.nomoredomains.rocks',
 ];
 
 require('dotenv').config();
