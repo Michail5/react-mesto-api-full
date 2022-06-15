@@ -10,22 +10,19 @@ const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/errorHandler');
 const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
- const cors = require('./middlewares/cors');
-import cors from 'cors';
-const server = express();
-server.use(cors());
+ //const cors = require('./middlewares/cors');
 
 const { PORT = 3001 } = process.env;
 const app = express();
 
- app.use(cors);
+ //app.use(cors);
 
-//const corsAllowed = [
-  //'https://localhost:3000',
-  //'http://localhost:3000',
-  //'https://domainname.students.nomoredomains.rocks',
-  //'https://api.domainnames.students.nomoredomains.rocks',
-//];
+const corsAllowed = [
+  'https://localhost:3000',
+  'http://localhost:3000',
+  'https://domainname.students.nomoredomains.rocks',
+  'https://api.domainnames.students.nomoredomains.rocks',
+];
 
 require('dotenv').config();
 
