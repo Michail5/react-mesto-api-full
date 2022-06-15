@@ -1,16 +1,40 @@
-const cardRouter = require('express').Router();
+const router = require('express').Router();
+const { celebrate, Joi } = require('celebrate');
+const { regExp } = require('../utils/const');
+
 const {
-  getCards, deleteCard, createCard, likeCard, dislikeCard,
+  getCards,
+  createCard,
+  deleteCard,
+  likeCard,
+  dislikeCard,
 } = require('../controllers/cards');
-const {
-  cardValidation,
-  cardIdValidation,
-} = require('../middlewares/validation');
 
-cardRouter.get('/', getCards);
-cardRouter.post('/', cardValidation, createCard);
-cardRouter.delete('/:id', cardIdValidation, deleteCard);
-cardRouter.put('/:id/likes', cardIdValidation, likeCard);
-cardRouter.delete('/:id/likes', cardIdValidation, dislikeCard);
+router.get('/', getCards);
 
-module.exports = cardRouter;
+router.post('/', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    link: Joi.string().required().pattern(regExp),
+  }),
+}), createCard);
+
+router.delete('/:id', celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().hex().required().length(24),
+  }),
+}), deleteCard);
+
+router.put('/:id/likes', celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().hex().required().length(24),
+  }),
+}), likeCard);
+
+router.delete('/:id/likes', celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().hex().required().length(24),
+  }),
+}), dislikeCard);
+
+module.exports = router;

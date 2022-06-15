@@ -1,53 +1,68 @@
+require('dotenv').config();
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const { errors } = require('celebrate');
-const cors = require('cors');
-const { createUser, login, signOut } = require('./controllers/users');
-const { userValidation, loginValidation } = require('./middlewares/validation');
-const auth = require('./middlewares/auth');
-const errorHandler = require('./middlewares/errorHandler');
-const NotFoundError = require('./errors/NotFoundError');
+const helmet = require('helmet');
+const { celebrate, Joi, errors } = require('celebrate');
+const {
+  createUser,
+  login,
+  logout,
+  checkToken,
+} = require('./controllers/users');
+const CustomError = require('./utils/CustomError');
+const { regExp, db } = require('./utils/const');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
- const cors = require('./middlewares/cors');
+const auth = require('./middlewares/auth');
+const cors = require('./middlewares/cors');
+const cards = require('./routes/cards');
+const users = require('./routes/users');
 
-const { PORT = 3001 } = process.env;
+const { PORT = 3000 } = process.env;
+
+mongoose
+  .connect(db, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('Connected to DB'))
+  .catch((error) => console.log(error));
+
 const app = express();
 
- app.use(cors);
-
-// const corsAllowed = [
-//   'https://localhost:3000',
-//   'http://localhost:3000',
-//   'https://domainname.students.nomoredomains.rocks',
-//   'https://api.domainnames.students.nomoredomains.rocks',
-//   'http://domainname.students.nomoredomains.rocks',
-//   'http://api.domainnames.students.nomoredomains.rocks',
-// ];
-
-require('dotenv').config();
-
-app.use(
-  cors({
-    credentials: true,
-    origin(origin, callback) {
-      if (corsAllowed.includes(origin) || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-  }),
-);
-
-app.options('*', cors());
-
+app.use(helmet());
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser());
-
 app.use(requestLogger);
+
+app.use(cors);
+
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(3),
+    }),
+  }),
+  login,
+);
+
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(3),
+      name: Joi.string().min(2).max(40),
+      about: Joi.string().min(2).max(200),
+      avatar: Joi.string().pattern(regExp),
+    }),
+  }),
+  createUser,
+);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -55,26 +70,28 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signin', loginValidation, login);
-app.post('/signup', userValidation, createUser);
-app.delete('/signout', signOut);
-
 app.use(auth);
-
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
-
-app.use('*', () => {
-  throw new NotFoundError('Запрашиваемый ресурс не найден');
-});
+app.use('/check', checkToken);
+app.use('/cards', cards);
+app.use('/users', users);
+app.get('/signout', logout);
 
 app.use(errorLogger);
 app.use(errors());
-app.use(errorHandler);
-mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
-app.listen(PORT, () => {
-  console.log('Ссылка на сервер');
-  console.log(PORT);
-  console.log(process.env.JWT_SECRET);
+app.use(() => {
+  throw new CustomError(404, 'Запрашиваемый ресурс не найден');
+});
+
+// eslint-disable-next-line
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res.status(statusCode).send({
+    message: !message ? 'На сервере произошла ошибка' : message,
+  });
+});
+
+app.listen(PORT, (error) => {
+  // eslint-disable-next-line
+  error ? console.log(error) : console.log(`listening port ${PORT}`);
 });
