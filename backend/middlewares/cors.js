@@ -1,11 +1,11 @@
 const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
-//const ALLOWED_CORS = [
- // 'http://localhost:3000',
-  //'http://localhost:3000',
- // 'https://localhost:3000',
-// 'https://domainname.students.nomoredomains.rocks',
-  //'https://api.domainnames.students.nomoredomains.rocks',
-//];
+const ALLOWED_CORS = [
+  'http://localhost:3000',
+  'http://localhost:3000',
+  'https://localhost:3000',
+  'https://domainname.students.nomoredomains.rocks',
+  'https://api.domainnames.students.nomoredomains.rocks',
+];
 
 module.exports = (req, res, next) => {
   const { method } = req;
@@ -22,7 +22,7 @@ module.exports = (req, res, next) => {
   if (method === 'OPTIONS') {
     res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
     res.header('Access-Control-Allow-Headers', requestHeaders);
-    return res.end();
+    res.end();
   }
 
    next();
