@@ -6,6 +6,7 @@ module.exports = (req, res, next) => {
   const allowedCors = [
    'https://domainname.students.nomoredomains.rocks',
     'http://domainname.students.nomoredomains.rocks',
+    'https://api.domainnames.students.nomoredomains.rocks',
     'http://localhost:3000',
   ];
 
