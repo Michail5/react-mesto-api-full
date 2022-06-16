@@ -14,7 +14,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const CORS_CONFIG = {
 credentials: true,
 original: [
-'http://domainname.students.nomoredomains.rocks',
+'false',
   ],
 };
 app.use(cors(CORS_CONFIG));
