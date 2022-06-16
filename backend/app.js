@@ -10,14 +10,15 @@ const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/errorHandler');
 const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-// const cors = require('./middlewares/cors');
-const CORS_CONFIG = {
-credentials: true,
-original: [
-'http://domainname.students.nomoredomains.rocks',
-  ],
-};
-app.use(cors(CORS_CONFIG));
+ const cors = require('./middlewares/cors');
+// const CORS_CONFIG = {
+// credentials: true,
+// original: [
+// 'http://domainname.students.nomoredomains.rocks',
+//   ],
+// };
+// app.use(cors(CORS_CONFIG));
+app.use(cors);
 const app = express();
 const { PORT = 3001 } = process.env;
 
@@ -35,20 +36,20 @@ const { PORT = 3001 } = process.env;
 
 require('dotenv').config();
 
-app.use(
-  cors({
-    credentials: true,
-    origin(origin, callback) {
-      if (corsAllowed.includes(origin) || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-  }),
-);
+// app.use(
+//   cors({
+//     credentials: true,
+//     origin(origin, callback) {
+//       if (corsAllowed.includes(origin) || !origin) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error('Not allowed by CORS'));
+//       }
+//     },
+//   }),
+// );
 
-app.options('*', cors());
+// app.options('*', cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
