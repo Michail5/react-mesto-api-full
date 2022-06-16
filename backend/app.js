@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
-//const cors = require('cors');
+const cors = require('cors');
 const { createUser, login, signOut } = require('./controllers/users');
 const { userValidation, loginValidation } = require('./middlewares/validation');
 const auth = require('./middlewares/auth');
@@ -14,7 +14,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const CORS_CONFIG = {
 credentials: true,
 original: [
-'false',
+'http://domainname.students.nomoredomains.rocks',
   ],
 };
 app.use(cors(CORS_CONFIG));
