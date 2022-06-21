@@ -12,7 +12,7 @@ const NotFoundError = require('./errors/NotFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 // const cors = require('./middlewares/cors');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3002 } = process.env;
 const app = express();
 
 // app.use(cors);
@@ -28,25 +28,16 @@ const corsAllowed = [
 
 require('dotenv').config();
 
-app.use(
-  cors({
-    credentials: true,
-    origin(origin, callback) {
-      if (corsAllowed.includes(origin) || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-  }),
-);
+var corsOptions = { origin: 'https://api.domainnames.students.nomoredomains.rocks',
+ optionsSuccessStatus: 200,
+        credentials: true
+}
 
-app.options('*', cors());
+app.use(cors(corsOptions))
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 app.use(requestLogger);
 
 app.get('/crash-test', () => {
@@ -60,6 +51,7 @@ app.post('/signup', userValidation, createUser);
 app.delete('/signout', signOut);
 
 app.use(auth);
+
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
