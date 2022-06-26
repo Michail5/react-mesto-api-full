@@ -28,9 +28,7 @@ const corsAllowed = [
 
 require('dotenv').config();
 
-var corsOptions = { origin:
-  'https://domainname.students.nomoredomains.rocks',
- 
+var corsOptions = { origin: corsAllowed,
  optionsSuccessStatus: 200,
         credentials: true
 }
@@ -40,7 +38,6 @@ app.use(cors(corsOptions))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 app.use(requestLogger);
 
 app.get('/crash-test', () => {
