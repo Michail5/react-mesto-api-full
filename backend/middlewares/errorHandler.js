@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const { server } = require('../errors/constants');
 
 module.exports = (e, req, res, next) => {

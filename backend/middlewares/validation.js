@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const { celebrate, CelebrateError, Joi } = require('celebrate');
 const { isURL, isEmail } = require('validator');
 

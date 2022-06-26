@@ -18,8 +18,6 @@ const app = express();
 // app.use(cors);
 
 const corsAllowed = [
-  'https://praktikum.tk',
-  'http://praktikum.tk',
   'http://localhost:3000',
   'https://localhost:3000',
   'https://domainname.students.nomoredomains.rocks',
@@ -28,12 +26,13 @@ const corsAllowed = [
 
 require('dotenv').config();
 
-var corsOptions = { origin: corsAllowed,
- optionsSuccessStatus: 200,
-        credentials: true
-}
+const corsOptions = {
+  origin: corsAllowed,
+  optionsSuccessStatus: 200,
+  credentials: true,
+};
 
-app.use(cors(corsOptions))
+app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
