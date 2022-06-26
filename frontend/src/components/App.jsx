@@ -234,8 +234,18 @@ function App() {
     }
   }, [loggedIn]);
 
+  function doesHttpOnlyCookieExist(cookiename) {
+    var d = new Date();
+    d.setTime(d.getTime() + (1000));
+    var expires = "expires=" + d.toUTCString();
+  
+    document.cookie = cookiename + "=new_value;path=/;" + expires;
+    return document.cookie.indexOf(cookiename + '=') == -1;
+  }
+
   const tokenCheck = useCallback(() => {
-    auth
+    if(doesHttpOnlyCookieExist('jwt')) {
+      auth
       .getContent()
       .then((res) => {
         if (res) {
@@ -247,11 +257,12 @@ function App() {
         }
       })
       .catch((e) => console.log(`${e} при проверке токена`));
-  }, [navigate]);
+    }
+  }, []);
 
   useEffect(() => {
     tokenCheck();
-  }, [tokenCheck]);
+  }, []);
 
   useEffect(() => {
     const handleEscClick = (e) => {
